@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -126,24 +127,289 @@ namespace TaskManagerExam
             }
         }
     }
-
+//---------------------------------------------------------------------------
     public class Task : SQLRequests
     {
         private int id;
         private string taskDescription;
+        private int userId;
+        private int decisionId;
+
+        public Task(int id, string taskDescription)
+        {
+            this.id = id;
+            this.taskDescription = taskDescription;
+        }
+
+        public override void Insert()
+        {
+
+            sqlQuery = $"INSERT INTO Tasks VALUES (@TDescription, @T_FK_User_ID, @T_FK_Decision_Id)";
+            sqlConnection.Open();
+            try
+            {
+                SqlCommand cmd = new SqlCommand(sqlQuery, sqlConnection);
+                SqlParameter parDescription = new SqlParameter("@TDescription", taskDescription);
+                SqlParameter parUserId = new SqlParameter("@T_FK_User_ID", userId);
+                SqlParameter parDecisionId = new SqlParameter("@T_FK_Decision_Id", decisionId);
+                cmd.Parameters.Add(parDescription);
+                cmd.Parameters.Add(parUserId);
+                cmd.Parameters.Add(parDecisionId);
+                cmd.ExecuteNonQuery(); //update delete insert
+                sqlConnection.Close();
+                Console.WriteLine($"Запись добавлена в БД");
+            }
+            catch (Exception ex)
+            {
+                sqlConnection.Close();
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        public override void Update()
+        {
+            sqlQuery = "UPDATE Tasks SET TDescription = @parTDescription, T_FK_User_ID = @parT_FK_User_ID, " +
+                        "T_FK_Decision_Id = @parT_FK_Decision_Id WHERE Id = @parId";
+
+            sqlConnection.Open();
+            try
+            {
+                SqlCommand cmd = new SqlCommand(sqlQuery, sqlConnection);
+                SqlParameter parId = new SqlParameter("@parId", id);
+                SqlParameter parDescription = new SqlParameter("@parTDescription", taskDescription);
+                SqlParameter parUserId = new SqlParameter("@parT_FK_User_ID", userId);
+                SqlParameter parDecisionId = new SqlParameter("@parT_FK_Decision_Id", decisionId);
+                cmd.Parameters.Add(parId);
+                cmd.Parameters.Add(parDescription);
+                cmd.Parameters.Add(parUserId);
+                cmd.Parameters.Add(parDecisionId);
+
+
+                cmd.ExecuteNonQuery();
+                sqlConnection.Close();
+                Console.WriteLine($"Запись обновлена в БД");
+            }
+            catch (Exception ex)
+            {
+                sqlConnection.Close();
+                Console.WriteLine(ex.ToString());
+            }
+        }
+        public override void Delete()
+        {
+            try
+            {
+                sqlQuery = "DELETE FROM Tasks WHERE Id = @parId";
+                sqlConnection.Open();
+                SqlCommand cmd = new SqlCommand(sqlQuery, sqlConnection);
+
+                SqlParameter parId = new SqlParameter("@parId", id);
+                cmd.Parameters.Add(parId);
+
+                cmd.ExecuteNonQuery();
+                sqlConnection.Close();
+                Console.WriteLine($"Запись удалена из БД");
+            }
+            catch (Exception ex)
+            {
+                sqlConnection.Close();
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+    }
+//---------------------------------------------------------------------------
+    public class Decision : SQLRequests
+    {
+        private int id;
         private string decisionDescription;
         private DateTime startDate;
         private DateTime endDate;
         private Statuses status;
-        private int userId;
+
+        public Decision(int id, string decisionDescription, DateTime startDate, DateTime endDate, Statuses status)
+        {
+            this.id = id;
+            this.decisionDescription = decisionDescription;
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.status = status;
+        }
+
+        public override void Insert()
+        {
+
+            sqlQuery = $"INSERT INTO Decisions VALUES (@DDescription, @DStartDate, @DEndDate, @DStatus)";
+            sqlConnection.Open();
+            try
+            {
+                SqlCommand cmd = new SqlCommand(sqlQuery, sqlConnection);
+                SqlParameter parDescription = new SqlParameter("@DDescription", decisionDescription);
+                SqlParameter parStartDate = new SqlParameter("@DStartDate", startDate);
+                SqlParameter parEndDate = new SqlParameter("@DEndDate", endDate);
+                SqlParameter parStatus = new SqlParameter("@DStatus", status);
+                cmd.Parameters.Add(parDescription);
+                cmd.Parameters.Add(parStartDate);
+                cmd.Parameters.Add(parEndDate);
+                cmd.Parameters.Add(parStatus);
+                cmd.ExecuteNonQuery(); //update delete insert
+                sqlConnection.Close();
+                Console.WriteLine($"Запись добавлена в БД");
+            }
+            catch (Exception ex)
+            {
+                sqlConnection.Close();
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        public override void Update()
+        {
+            sqlQuery = "UPDATE Decisions SET DDescription = @parDDescription, DStartDate = @parDStartDate, " +
+                        "DEndDate = @parDEndDate, DStatus = @DStatus WHERE Id = @parId";
+
+            sqlConnection.Open();
+            try
+            {
+                SqlCommand cmd = new SqlCommand(sqlQuery, sqlConnection);
+                SqlParameter parId = new SqlParameter("@parId", id);
+                SqlParameter parDescription = new SqlParameter("@parDDescription", decisionDescription);
+                SqlParameter parStartDate = new SqlParameter("@parDStartDate", startDate);
+                SqlParameter parEndDate = new SqlParameter("@parDEndDate", endDate);
+                SqlParameter parStatus = new SqlParameter("@parDStatus", status);
+                cmd.Parameters.Add(parId);
+                cmd.Parameters.Add(parDescription);
+                cmd.Parameters.Add(parStartDate);
+                cmd.Parameters.Add(parEndDate);
+                cmd.Parameters.Add(parStatus);
+
+
+                cmd.ExecuteNonQuery();
+                sqlConnection.Close();
+                Console.WriteLine($"Запись обновлена в БД");
+            }
+            catch (Exception ex)
+            {
+                sqlConnection.Close();
+                Console.WriteLine(ex.ToString());
+            }
+        }
+        public override void Delete()
+        {
+            try
+            {
+                sqlQuery = "DELETE FROM Decisions WHERE Id = @parId";
+                sqlConnection.Open();
+                SqlCommand cmd = new SqlCommand(sqlQuery, sqlConnection);
+
+                SqlParameter parId = new SqlParameter("@parId", id);
+                cmd.Parameters.Add(parId);
+
+                cmd.ExecuteNonQuery();
+                sqlConnection.Close();
+                Console.WriteLine($"Запись удалена из БД");
+            }
+            catch (Exception ex)
+            {
+                sqlConnection.Close();
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+
 
     }
+ //---------------------------------------------------------------------------
     public class User : SQLRequests
     {
         private int id;
         private string username;
         private string password;
         private UserTypes userType;
+
+        public User (int id, string username, string password, UserTypes userType)
+        {
+            this.id = id;
+            this.username = username;
+            this.password = password;
+            this.userType = userType;
+        }
+
+        public override void Insert()
+        {
+
+            sqlQuery = $"INSERT INTO Users VALUES (@UFullName, @UPassWord, @UType)";
+            sqlConnection.Open();
+            try
+            {
+                SqlCommand cmd = new SqlCommand(sqlQuery, sqlConnection);
+                SqlParameter parUFullName = new SqlParameter("@UFullName", username);
+                SqlParameter parUPassWord = new SqlParameter("@UPassWord", password);
+                SqlParameter parUType = new SqlParameter("@UType", userType);
+                cmd.Parameters.Add(parUFullName);
+                cmd.Parameters.Add(parUPassWord);
+                cmd.Parameters.Add(parUType);
+                cmd.ExecuteNonQuery(); //update delete insert
+                sqlConnection.Close();
+                Console.WriteLine($"Запись добавлена в БД");
+            }
+            catch (Exception ex)
+            {
+                sqlConnection.Close();
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
+        public override void Update()
+        {
+            sqlQuery = "UPDATE Users SET UFullName = @parUFullName, UPassWord = @parUPassWord, " +
+                        "UType = @UType WHERE Id = @parId";
+
+            sqlConnection.Open();
+            try
+            {
+                SqlCommand cmd = new SqlCommand(sqlQuery, sqlConnection);
+                SqlParameter parId = new SqlParameter("@parId", id);
+                SqlParameter parUFullName = new SqlParameter("@UFullName", username);
+                SqlParameter parUPassWord = new SqlParameter("@UPassWord", password);
+                SqlParameter parUType = new SqlParameter("@UType", userType);
+                cmd.Parameters.Add(parId);
+                cmd.Parameters.Add(parUFullName);
+                cmd.Parameters.Add(parUPassWord);
+                cmd.Parameters.Add(parUType);
+
+
+                cmd.ExecuteNonQuery();
+                sqlConnection.Close();
+                Console.WriteLine($"Запись обновлена в БД");
+            }
+            catch (Exception ex)
+            {
+                sqlConnection.Close();
+                Console.WriteLine(ex.ToString());
+            }
+        }
+        public override void Delete()
+        {
+            try
+            {
+                sqlQuery = "DELETE FROM Users WHERE Id = @parId";
+                sqlConnection.Open();
+                SqlCommand cmd = new SqlCommand(sqlQuery, sqlConnection);
+
+                SqlParameter parId = new SqlParameter("@parId", id);
+                cmd.Parameters.Add(parId);
+
+                cmd.ExecuteNonQuery();
+                sqlConnection.Close();
+                Console.WriteLine($"Запись удалена из БД");
+            }
+            catch (Exception ex)
+            {
+                sqlConnection.Close();
+                Console.WriteLine(ex.ToString());
+            }
+        }
     }
 
 }

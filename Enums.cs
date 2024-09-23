@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace TaskManagerExam
 {
-    enum Statuses
+    public enum Statuses
     {
         NEW = 0,
         IN_PROGRESS,
         CLOSED        
     }
-    enum UserTypes
+    public enum UserTypes
     {
         UNKNOWN = 0,
         MANAGER,
