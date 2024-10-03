@@ -18,4 +18,29 @@ namespace TaskManagerExam
         MANAGER,
         ADMIN
     }
+    public enum MenuTasks
+    {
+        UNKNOWN = 0,
+        ADD_OBJECT,
+        ADD_TASK,
+        ADD_DECISION,
+        ADD_USER,
+
+        EDIT_OBJECT,
+        EDIT_TASK,
+        EDIT_DECISION,
+        EDIT_USER,
+
+        DELETE_OBJECT,
+        DELETE_TASK,
+        DELETE_DECISION,
+        DELETE_USER,
+        
+        SHOW_ALL_OBJECTS,
+        SHOW_ALL_TASKS,        
+        SHOW_ALL_USERS,
+
+        EXIT
+
+    }
 }

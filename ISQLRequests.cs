@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,12 +14,15 @@ namespace TaskManagerExam
     public delegate void Delete();
 
 
+
     public interface ISQLRequests
     {
         void Insert();
         void Update();
         void Delete();
         //void GetInfo(List<Object> itemList);
+
+        
     }
 
     public abstract class SQLRequests : ISQLRequests
